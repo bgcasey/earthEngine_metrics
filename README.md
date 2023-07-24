@@ -2,6 +2,11 @@
 
 Here is code that can be used to extract various metrics to point count locations using Google Earth Engine. The code can is meant to be used with earth engine's online code editor.
 
+
+`all_metrics.js` is the main  script you should work with. Edit it to define your study area, point count locations, buffer size for zonal stats, and time period of interests. The script will call upon functions stored in the `functions` folder. `landsat_functions.js` calculates various spectral indices from landsat imagery. `HLI.js` contains functions for calculating heat load index. `TPI.js` contains functions for calculating standard terrain metrics including topographic position index. `timeseries_functions.js` contains functions that summarizes different metrics (landsat spectral indicees, climate, and landcover classifications) accross user defined time series. 
+
+
+
 ## Included metrics
 
 | Variable                  | Description                                                                                                                                            | Resolution (m) | Source                                                      |
