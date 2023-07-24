@@ -1,9 +1,8 @@
-# earthEngine_metrics
+# Getting spatial variables with Google Earth Engine
 
 Here is code that can be used to extract various metrics to point count locations using Google Earth Engine. The code can is meant to be used with earth engine's online code editor.
 
-We calculated and/or extracted the following metrics in Google Earth
-Engine:
+## Included metrics
 
 | Variable                  | Description                                                                                                                                            | Resolution (m) | Source                                                      |
 |:--------------------------|:-------------------------------------------------------------------------------------------------------------------------------------------------------|---------------:|:------------------------------------------------------------|
