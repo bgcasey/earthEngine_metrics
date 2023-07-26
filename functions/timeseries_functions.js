@@ -5,7 +5,6 @@
 /////////////////////////////////////////////////////////////////////////
 var landsat = require("users/bgcasey/climate_downscaling:functions/landsat_functions");
 
-
 exports.leo7_fn = function(dates, interval, aoi) {
   
   var leo7_ts = function(d1) {
@@ -13,8 +12,14 @@ exports.leo7_fn = function(dates, interval, aoi) {
   var end = ee.Date(d1).advance(interval, 'month');
   var date_range = ee.DateRange(start, end);
   var date =ee.Date(d1)
+  
+  var leo5=ee.ImageCollection('LANDSAT/LT05/C02/T1_L2')
+    .filterDate(date_range)
+    // .filterBounds(aoi)
   var leo7=ee.ImageCollection('LANDSAT/LE07/C02/T1_L2')
     .filterDate(date_range)
+    // .filterBounds(aoi)
+  var mergedCollection = leo5.merge(leo7)
     .map(landsat.applyScaleFactors)
     .map(landsat.mask_cloud_snow) // apply the cloud mask function
     .map(landsat.addNDVI)  // apply NDVI function
@@ -25,10 +30,11 @@ exports.leo7_fn = function(dates, interval, aoi) {
     .map(landsat.addSI)
     .map(landsat.addLAI)
     // .map(function(img){return img.clip(aoi).reproject({crs: 'EPSG:4326', scale:30})})//clip to study area
-  return(leo7
+  return(mergedCollection
         .median()
         .set("date", date,"month", date.get('month'), "year", date.get('year'))
-        .select(['NDVI', 'NDMI', 'EVI', 'SAVI', 'BSI', 'SI', 'LAI']))
+        .select(['NDVI', 'NDMI', 'EVI', 'SAVI', 'BSI', 'SI', 'LAI'])
+        )
         ;
   };
 
@@ -52,22 +58,27 @@ exports.leo7_snow_fn = function(dates, interval, aoi) {
   var end = ee.Date(d1).advance(interval, 'month');
   var date_range = ee.DateRange(start, end);
   var date =ee.Date(d1)
-  var leo7=ee.ImageCollection('LANDSAT/LE07/C02/T1_L2')
+  var leo5=ee.ImageCollection('LANDSAT/LT05/C02/T1_L2')
     .filterDate(date_range)
+    // .filterBounds(aoi)
+  var leo7=ee.ImageCollection('LANDSAT/LE07/C02/T1_L2')
+  var mergedCollection = leo5.merge(leo7)
+    .filterDate(date_range)
+    // .filterBounds(aoi)
     .map(landsat.applyScaleFactors)
     .map(landsat.mask_cloud) // apply the cloud mask function
     .map(landsat.addNDSI)  // apply NDSI function
     .map(landsat.addSnow)  // apply Snow function
-  return(leo7
+  return(mergedCollection
         .median()
         .set("date", date,"month", date.get('month'), "year", date.get('year'))
         .select(['NDSI', 'snow']))
         ;
   };
   
-  var leo7=ee.ImageCollection((dates).map(leo7_snow_ts))
+  var snow=ee.ImageCollection((dates).map(leo7_snow_ts))
     .map(function(img){return img.clip(aoi)});
-  return leo7;
+  return snow;
 
 };
 
@@ -146,6 +157,5 @@ exports.noaa_fn = function(dates, interval, aoi) {
   return leo7;
 
 };
-
 
 
